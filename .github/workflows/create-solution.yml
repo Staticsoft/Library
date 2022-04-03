@@ -30,3 +30,7 @@ jobs:
       run: mv ${{ github.event.repository.name }}/{.[!.],}* .
     - name: Remove empty directory
       run: rmdir ${{ github.event.repository.name }}
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "Created solution from library template"
