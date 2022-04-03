@@ -29,7 +29,14 @@ jobs:
       run: mv ${{ github.event.repository.name }}/{.[!.],}* .
     - name: Remove empty directory
       run: rmdir ${{ github.event.repository.name }}
+    - name: Get LibraryInitializer App token
+      id: get-token
+      uses: navikt/github-app-token-generator@v1
+      with:
+        private-key: ${{ secrets.LibraryInitializerAppId }}
+        app-id: ${{ secrets.LibraryInitializerAppSecret }}
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: "Created solution from library template"
+        token: ${{ steps.get-token.outputs.token }}
