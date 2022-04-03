@@ -10,7 +10,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     - name: Check there is only one commit
-      run: [[ `git rev-list --all --count` == 1 ]] || exit 1
+      run: "[[ `git rev-list --all --count` == 1 ]] || exit 1"
     - uses: actions/setup-dotnet@v1
       with:
         dotnet-version: | 
