@@ -9,6 +9,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+    - name: Display amount of commits
+      run: git rev-list --all --count
     - name: Check there is only one commit
       run: "[[ `git rev-list --all --count` == 1 ]] || exit 1"
     - uses: actions/setup-dotnet@v1
