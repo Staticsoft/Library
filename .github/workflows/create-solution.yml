@@ -1,0 +1,32 @@
+name: Create solution from template
+on:
+  push:
+    branches:
+      master
+jobs:
+  CreateSolution:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Check there is only one commit
+      run: [[ `git rev-list --all --count` == 1 ]] || exit 1
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: | 
+          3.1.x
+          6.0.x
+    - name: Install template
+      run: dotnet new --install Staticsoft.Template.Library
+    - name: Create solution
+      run: dotnet new staticsoft-lib -n ${{ github.event.repository.name }}
+    - name: Enable extended globbing (different pattern matching for ! symbol)
+      run: shopt -s extglob
+    - name: Delete all files except .git and library
+      run: rm -rf !(.|..|.git|${{ github.event.repository.name })
+    - name: Disable extended globbing
+      run: shopt -u extglob
+    - name: Move library files to root directory
+      run: mv ${{ github.event.repository.name }}/{.[!.],}* .
+    - name: Remove empty directory
+      run: rmdir ${{ github.event.repository.name }}
