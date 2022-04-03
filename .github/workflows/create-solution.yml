@@ -12,6 +12,8 @@ jobs:
       with:
         fetch-depth: 0
         ref: ${{ github.head_ref }}
+    - name: Check there is only one commit
+      run: "[[ `git rev-list --all --count` == 1 ]] || exit 1"
     - uses: actions/setup-dotnet@v1
       with:
         dotnet-version: | 
@@ -27,4 +29,7 @@ jobs:
       run: mv ${{ github.event.repository.name }}/{.[!.],}* .
     - name: Remove empty directory
       run: rmdir ${{ github.event.repository.name }}
-      
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "Created solution from library template"
