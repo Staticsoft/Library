@@ -7,11 +7,18 @@ jobs:
   CreateSolution:
     runs-on: ubuntu-latest
     steps:
+    - name: Get LibraryInitializer App token
+      id: get-token
+      uses: navikt/github-app-token-generator@v1
+      with:
+        app-id: ${{ secrets.LibraryInitializerAppId }}
+        private-key: ${{ secrets.LibraryInitializerAppSecret }}
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
         ref: ${{ github.head_ref }}
+        token: ${{ steps.get-token.outputs.token }}
     - name: Check there is only one commit
       run: "[[ `git rev-list --all --count` == 1 ]] || exit 1"
     - uses: actions/setup-dotnet@v1
@@ -29,15 +36,7 @@ jobs:
       run: mv ${{ github.event.repository.name }}/{.[!.],}* .
     - name: Remove empty directory
       run: rmdir ${{ github.event.repository.name }}
-    - name: Get LibraryInitializer App token
-      id: get-token
-      uses: navikt/github-app-token-generator@v1
-      with:
-        app-id: ${{ secrets.LibraryInitializerAppId }}
-        private-key: ${{ secrets.LibraryInitializerAppSecret }}
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v4
-      env:
-        GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
       with:
         commit_message: "Created solution from library template"
